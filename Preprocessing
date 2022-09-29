@@ -1,0 +1,154 @@
+import glob
+import os
+os.chdir(r'C:/Data cleansing/Text files')
+my_files = glob.glob("*.txt")
+for x in my_files:
+    if x.endswith(".txt"):
+        # Prints only text file present in Folder
+        print(x)
+        filename = x
+        path = r'C:\Data cleansing\Text files'
+        print(filename)
+        goal_dir = os.path.join(path, filename)
+        print(os.path.join(path, filename))
+        print(goal_dir)
+        f = open(os.path.join(path, filename), mode='r', encoding='utf-8')
+        pdf_data = f.read()
+        text = str(pdf_data)
+        #print(text)
+        
+        from autocorrect import Speller
+        from nltk.tokenize import word_tokenize
+
+
+        def to_lower(text):
+
+            """
+            Converting text to lower case as in, converting "Hello" to  "hello" or "HELLO" to "hello".
+            """
+            
+            # Specll check the words
+            spell  = Speller(lang='en')
+            
+            texts = spell(text)
+            
+            return ' '.join([w.lower() for w in word_tokenize(text)])
+
+        lower_case = to_lower(text)
+        #pprint(lower_case)
+
+        import nltk
+        import re
+        import string
+        from nltk.corpus import stopwords, brown
+        from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
+        from nltk.stem import WordNetLemmatizer
+        from autocorrect import spell
+
+        def clean_text(lower_case):
+            # split text phrases into words
+            words  = nltk.word_tokenize(lower_case)
+            
+            
+            # Create a list of all the punctuations we wish to remove
+            punctuations = ['.', ',', '/', '!', '?', ';', ':', '(',')', '[',']', '-', '_', '%']
+            
+            # Remove all the special characters
+            punctuations = re.sub(r'\W', ' ', str(lower_case))
+            
+            # Initialize the stopwords variable, which is a list of words ('and', 'the', 'i', 'yourself', 'is') that do not hold much values as key words
+            stop_words  = stopwords.words('english')
+            #stopwords = stopwords.words('english')
+            stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
+            stop_words.extend(['whatever', 'thereupon', 'side', 'an', 'his', 'bottom', 'else', 'whose', 'too', 'their', '‘s', '’ll', 'ca', 'well', 'mostly', 'mine', 'whence', 'and', 'either', 'what', 'same', 'we', 'further', 'been', 'beside', 'front', 'whom', 're', 'none', 'namely', 'someone', 'several', 'done', 'one', 'towards', 'by', 'him', 'n’t', '‘re', 'whereafter', 'n‘t', 'sometime', 'whole', 'call', 'part', 'anything', 'whereas', 'themselves', 'latterly', 'except', 'everyone', 'anyone', 'he', 'yourselves', 'therein', 'every', 'thereafter', 'doing', 'than', 'via', 'just', 'there', 'anyhow', 'former', 'seeming', 'everywhere', 'nine', 'top', 'first', 'otherwise', 'am', 'without', 'being', 'become', 'least', 'within', 'whereupon', 'move', 'through', 'afterwards', '‘ve', 'whether', 'these', 'last', 'perhaps', '’re', 'becomes', 'how', 'neither', 'during', 'always', 'the', 'over', 'something', 'whoever', 'or', 'even', '’s', 'have', 'most', '‘d', 'moreover', 'as', 'together', 'indeed', 'yours', 'to', 'full', "'ve", 'due', 'various', 'above', 'say', 'would', 'this', 'did', 'cannot', 'three', 'regarding', 'although', 'may', 'beyond', 'whereby', 'elsewhere', 'whenever', 'is', 'meanwhile', 'be', 'so', 'next', 'thus', 'below', 'who', 'can', 'enough', 'behind', 'into', 'had', 'around', 'i', '‘ll', 'made', 'toward', 'my', 'often', 'name', 'per', 'almost', 'they', 'less', 'must', 'upon', 'somehow', 'out', 'were', 'was', 'only', 'has', 'herself', 'of', 'two', 'please', 'you', 'third', 'us', 'already', 'much', 'serious', 'it', 'though', 'each', 'before', 'down', 'among', 'while', "'m", '’d', 'why', 'thence', 'himself', 'off', 'hers', 'nothing', 'her', 'in', 'thereby', 'give', 'no', 'for', 'alone', 'those', 'which', 'across', 'on', 'up', 'nevertheless', 'never', 'beforehand', 'myself', 'our', 'thru', 'sometimes', 'hereafter', 'between', 'will', 'at', 'latter', 'twelve', 'throughout', 'all', 'empty', '’m', 'itself', 'under', 'go', 'hundred', 'wherever', 'back', 'besides', 'might', 'forty', 'against', 'becoming', 'but', 'not', 'fifty', 'anywhere', 'ten', 'when', 'once', "'d", 'really', 'are', 'here', 'using', 'fifteen', 'about', 'also', 'herein', 'then', "'re", 'nobody', 'however', 'somewhere', 'your', 'do', 'from', 'such', 'get', 'after', '‘m', 'noone', 'seemed', 'other', 'now', 'nowhere', 'seem', 'four', 'eight', 'see', 'that', 'very', 'anyway', 'ever', 'many', 'everything', 'me', 'make', 'few', 'if', 'became', 'yet', 'its', 'six', 'since', 'a', 'put', 'because', 'ours', 'should', 'where', 'with', 'nor', 'seems', "'s", 'another', 'take', 'does', 'others', 'hence', 'therefore', 'five', 'them', 'again', 'keep', '’ve', 'both', 'some', 'could', 'hereupon', 'amongst', 'quite', 'rather', 'eleven', 'hereby', "n't", 'own', 'any', 'still', 'used', 'wherein', 'along', 'amount', 'ourselves', 'formerly', 'show', 'sixty', 'unless', 'whither', 'more', 'twenty', 'yourself', 'onto', 'she', "'ll", 'until']
+            
+            # Getting rid of all the words that contain numbers in them
+            w_num = re.sub('\w*\d\w*', '', lower_case).strip()
+            
+            # remove all single characters
+            lower_case = re.sub(r'\s+[a-zA-Z]\s+', ' ', lower_case)
+            
+            # Substituting multiple spaces with single space
+            lower_case = re.sub(r'\s+', ' ', lower_case, flags=re.I)
+            
+            # Removing prefixed 'b'
+            lower_case = re.sub(r'^b\s+', '', lower_case)
+            
+            
+            # Removing non-english characters
+            lower_case = re.sub(r'^b\s+', '', lower_case)
+            
+            # Return keywords which are not in stop words 
+            keywords = [word for word in words if not word in stop_words  and word in punctuations and  word in w_num]
+            
+            return keywords
+
+        # Lemmatize the words
+        wordnet_lemmatizer = WordNetLemmatizer()
+
+        lemmatized_word = [wordnet_lemmatizer.lemmatize(word) for word in clean_text(lower_case)]
+
+        # lets print out the output from our function above and see how the data looks like
+        clean_data = ' '.join(lemmatized_word)
+        #pprint(clean_data)
+        
+        #first_pass = r'C:\Data cleansing\First pass'
+        #nltk_file = os.path.join(first_pass, filename)
+        #with open(nltk_file, 'w', encoding='utf') as f:
+            #f.write(str(clean_data))
+        
+        # Gensim
+        import gensim
+        import gensim.corpora as corpora
+        from gensim.utils import simple_preprocess
+        from gensim.models import CoherenceModel
+
+        # Plotting tools
+        import pyLDAvis
+        #import graphlab as gl
+        #import pyLDAvis.graphlab
+        import pyLDAvis.gensim_models  # don't skip this
+
+        # Enable logging for gensim - optional
+        import logging
+        logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.ERROR)
+
+        data  = []
+        data.append(clean_text(lower_case))
+
+        # This time we use spacy for lemmatizarion 
+        import spacy
+
+        # Second lemmatization of our data
+        def lemmatization(data, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
+        #def lemmatization(data, allowed_postags=['NOUN', 'VERB', 'ADV']):
+        #def lemmatization(data, allowed_postags=['NOUN', 'VERB']):
+        #def lemmatization(data, allowed_postags=['NOUN']):
+        #def lemmatization(data, allowed_postags=['VERB']):
+            """https://spacy.io/api/annotation"""
+            texts_output = []
+            for sent in data:
+                doc = nlp(" ".join(sent)) 
+                texts_output.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
+            return texts_output
+
+        #nlp = spacy.load('en', disable=['parser', 'ner'])
+        nlp = spacy.load('en_core_web_lg')
+        nlp.max_length = 999999999999
+
+        # Lemmatize keeping only noun, adj, vb, adv
+        data_lemmatized = lemmatization(data, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
+        #data_lemmatized = lemmatization(data, allowed_postags=['NOUN', 'VERB', 'ADV'])
+        #data_lemmatized = lemmatization(data, allowed_postags=['NOUN', 'VERB'])
+        #data_lemmatized = lemmatization(data, allowed_postags=['NOUN'])
+        #data_lemmatized = lemmatization(data, allowed_postags=['VERB'])
+        
+                # Remove all the special characters
+        new_data_lemmatized = re.sub(r'\W', ' ', str(data_lemmatized))
+        new_data_lemmatized = re.sub(' +',' ', new_data_lemmatized)
+
+        second_pass = r'C:\Data cleansing\Second pass'
+        spacy_file = os.path.join(second_pass, filename)
+        print(spacy_file)
+        with open(spacy_file, 'w', encoding='utf') as f:
+        f.write(str(new_data_lemmatized[:]))
